@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace TimerSystem;
 
-// TODO: Clear timers once they are done ( Probably make it a bool )
-public static class Timer
+public static class Timers
 {
-	private static readonly Dictionary<string, TimerObject> Timers = new ();
+	private static readonly Dictionary<string, TimerObject> _Timers = new ();
 
 	/**
 	 * Creates a timer with the given ID.
@@ -15,16 +14,16 @@ public static class Timer
 	 * <param name="rep">Number of repetitions</param>
 	 * <param name="func">Function to run</param>
 	 */
-	 public static void Create( string id, float delay, int rep, Action func )
+	 public static void Create( string id, float delay, int rep, Action func)
 	{
-		if ( Timers.ContainsKey( id ) )
+		if ( _Timers.ContainsKey( id ) )
 		{
 			Log.Warning($"Timer with ID {id} already exists!");
 			return;
 		}
 
-		var timer = new TimerObject( id, delay, rep, func );
-		Timers.Add( id, timer );
+		var timer = new TimerObject( id, delay, rep, func, Remove);
+		_Timers.Add( id, timer );
 		_ = timer.Run();
 	}
 	/**
@@ -32,7 +31,7 @@ public static class Timer
 	 * <param name="delay">Delay in seconds</param>
 	 * <param name="func">Function to run</param>
 	 */
-	public static void Simple( float delay, Action func )
+	public static void Simple( float delay, Action func)
 	{
 		var id = Guid.NewGuid().ToString();
 		Create( id, delay, 1, func );
@@ -44,7 +43,7 @@ public static class Timer
 	 */
 	public static void Pause( string id )
 	{
-		if ( Timers.TryGetValue( id, out var timer ) )
+		if ( _Timers.TryGetValue( id, out var timer ) )
 		{
 			timer.IsPaused = true;
 		}
@@ -57,7 +56,7 @@ public static class Timer
 	 */
 	public static void Resume( string id )
 	{
-		if ( !Timers.TryGetValue( id, out var timer ) )
+		if ( !_Timers.TryGetValue( id, out var timer ) )
 		{
 			return;
 		}
@@ -72,25 +71,26 @@ public static class Timer
 	 */
 	public static void Remove( string id )
 	{
-		if ( !Timers.TryGetValue( id, out var timer ) )
-		{
-			return;
+		if ( !_Timers.TryGetValue( id, out var timer ) )
+		{ 
+			Log.Info($"Could not find timer with ID {id}");
 		}
-
-		timer.IsPaused = true;
-		Timers.Remove( id );
+		
+		Log.Info($"Removing timer with ID {id}");
+		_Timers.Remove( id );
 	}
-
+	
+	
 	/**
 	 * Clears all timers.
 	 */
 	public static void Clear()
 	{
-		foreach ( var timer in Timers )
+		foreach ( var timer in _Timers )
 		{
 			timer.Value.IsPaused = true;
 		}
-		Timers.Clear();
+		_Timers.Clear();
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public static class Timer
 	 */
 	public static bool Exist( string id )
 	{
-		return Timers.ContainsKey( id );
+		return _Timers.ContainsKey( id );
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public static class Timer
 	 */
 	public static void TimeLeft( string id )
 	{
-		if ( !Timers.TryGetValue( id, out var timer ) )
+		if ( !_Timers.TryGetValue( id, out var timer ) )
 		{
 			Log.Warning($"Timer with ID {id} does not exist!");
 			return;
@@ -123,7 +123,7 @@ public static class Timer
 	 */
 	public static void RepsLeft( string id )
 	{
-		if ( !Timers.TryGetValue( id, out var timer ) )
+		if ( !_Timers.TryGetValue( id, out var timer ) )
 		{
 			Log.Warning($"Timer with ID {id} does not exist!");
 			return;
