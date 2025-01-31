@@ -1,0 +1,13 @@
+{
+  "Title": "Timers",
+  "Type": "library",
+  "Org": "bcx",
+  "Ident": "timers",
+  "Schema": 1,
+  "IncludeSourceFiles": false,
+  "Resources": null,
+  "PackageReferences": [],
+  "EditorReferences": null,
+  "IsWhitelistDisabled": false,
+  "Metadata": {}
+}
